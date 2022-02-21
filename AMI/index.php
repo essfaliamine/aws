@@ -1,6 +1,6 @@
-<h3>Here is the IP Address of this EC2 instance:</h3>
+<h3>Hello</h3>
 <h1>
-<?php echo $_SERVER['SERVER_ADDR']; ?>
+<?php echo "This is Static content for Amazon Machine Image"; ?>
 </h1>
 
 By Mohamed Amine ESSFALI
