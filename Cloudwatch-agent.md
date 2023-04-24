@@ -3,8 +3,8 @@
 
 
 
-## Step 1: Create an IAM and Attach CloudWatch and SSM Full Access - EC2-CloudWatch-Role
-## Step 2: Create a parameter in Systems Manger with the name "/alarm/AWS-CWAgentConfig" and store the value:
+## Step 1: Create an IAM and Attach CloudWatch and SSM Full Access
+## Step 2: Create a parameter in Systems Manger with the name "/Alarm/AWS-CWAgentConfig" and store the value:
 ```bash
 {
 	"metrics": {
@@ -30,7 +30,7 @@
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip
 unzip AmazonCloudWatchAgent.zip
 sudo ./install.sh
-sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:/alarm/AWS-CWAgentLinConfig -s
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:/Alarm/AWS-CWAgentConfig -s
 ```
 
 ## Check the status of the CWAgent:
