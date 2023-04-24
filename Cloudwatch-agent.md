@@ -11,13 +11,24 @@
 		"append_dimensions": {
 			"InstanceId": "${aws:InstanceId}"
 		},
+		"namespace": "LinuxInstances",
 		"metrics_collected": {
 			"mem": {
 				"measurement": [
+					{"name": "mem_used_percent", "rename": "MemoryUtilization"}
 					"mem_used_percent"
-				],
-				"metrics_collection_interval": 60
-			}
+					],
+					"metrics_collection_interval": 60
+				},
+			"disk": {
+        			"measurement": [
+                  			{"name": "used_percent", "rename": "DiskSpaceUtilization"}
+        				],
+        				"metrics_collection_interval": 60,
+        				"resources": [
+                 				 "*"
+        				]
+        			}
 		}
 	}
 }
