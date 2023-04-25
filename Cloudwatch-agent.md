@@ -3,7 +3,7 @@
 
 
 
-## Step 1: Create an IAM and Attach CloudWatch and SSM Full Access
+## Step 1: Create an IAM role and Attach CloudWatch and SSM Full Access
 ## Step 2: Create a parameter in Systems Manger with the name "/Alarm/AWS-CWAgentConfig" and store the value:
 ```bash
 {
