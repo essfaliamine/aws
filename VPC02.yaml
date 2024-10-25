@@ -1,0 +1,229 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  Creation of a   VPC02
+
+Parameters:
+
+
+  VpcCIDR:
+    Description: Please enter the IP range (CIDR notation) for this VPC
+    Type: String
+    Default: 10.20.0.0/16
+    
+  pVPCName:
+    Type: String
+    Description: VPC Name Tag
+    Default: VPC09
+   
+    
+    
+Resources:
+
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      CidrBlock: !Ref VpcCIDR
+      Tags:
+      - Key: Name
+        Value:
+          Ref: pVPCName
+
+
+        
+  PivateSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Private SG
+      GroupName: "Private SG"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          CidrIp: 10.20.0.0/16
+          FromPort: 0
+          ToPort: 65535
+          Description: Allow any private
+      Tags:
+        - Key: Name
+          Value: "VPC02 Private SG"
+      VpcId:
+        Ref: VPC        
+
+
+
+
+  #INTERNET GATEWAY CREATION
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Application
+        Value:
+          Ref: AWS::StackName
+      - Key: Name
+        Value: IGW-09
+      - Key: Network
+        Value: Public
+
+  GatewayToInternet:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: VPC
+      InternetGatewayId:
+        Ref: InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Application
+        Value:
+          Ref: AWS::StackName
+      - Key: Name
+        Value: RT-Public
+      - Key: Network
+        Value: Public
+      - Key: RouteTableType
+        Value: Public
+
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: GatewayToInternet
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+
+  #PUBLIC SUBNETS CREATION:
+  PublicSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.20.0.0/24
+      MapPublicIpOnLaunch: true
+      #1 >>>
+      AvailabilityZone:
+        Fn::Select:
+        - '0'
+        - Fn::GetAZs: ''
+      #1 <<<
+      Tags:
+      - Key: Application
+        Value:
+          Ref: AWS::StackName
+      - Key: Network
+        Value: Public Subnet
+      - Key: Name
+        Value: !Sub "${pVPCName}-SUB-PUB-AZa"
+      - Key: SubnetType
+        Value: Public
+
+  PublicSubnetRouteTableAssociation1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet1a
+      RouteTableId:
+        Ref: PublicRouteTable  
+        
+ 
+  PublicSubnet1b:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.20.1.0/24
+      MapPublicIpOnLaunch: true
+      #1 >>>
+      AvailabilityZone:
+        Fn::Select:
+        - '1'
+        - Fn::GetAZs: ''
+      #1 <<<
+      Tags:
+      - Key: Application
+        Value:
+          Ref: AWS::StackName
+      - Key: Network
+        Value: Public Subnet
+      - Key: Name
+        Value: !Sub "${pVPCName}-SUB-PUB-AZb"
+      - Key: SubnetType
+        Value: Public
+
+  PublicSubnetRouteTableAssociation1b:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet1b
+      RouteTableId:
+        Ref: PublicRouteTable  
+
+  #PRIVATE SUBNETS CREATION
+  PrivateSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.20.2.0/24
+      #1 >>>
+      AvailabilityZone:
+        Fn::Select:
+        - '0'
+        - Fn::GetAZs: ''
+      #1 <<<
+      Tags:
+      - Key: Application
+        Value:
+          Ref: AWS::StackName
+      - Key: Network
+        Value: Private Subnet
+      - Key: Name
+        Value: !Sub "${pVPCName}-SUB-PRV-AZa"
+      - Key: SubnetType
+        Value: Private
+
+
+
+  PrivateSubnet1b:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.20.3.0/24
+      #1 >>>
+      AvailabilityZone:
+        Fn::Select:
+        - '1'
+        - Fn::GetAZs: ''
+      #1 <<<
+      Tags:
+      - Key: Application
+        Value:
+          Ref: AWS::StackName
+      - Key: Network
+        Value: Private Subnet
+      - Key: Name
+        Value: !Sub "${pVPCName}-SUB-PRV-AZb"
+      - Key: SubnetType
+        Value: Private
+
+        
+        
+Outputs:
+  VPCId:
+    Description: VPC Id of the newly created VPC
+    Value:
+      Ref: VPC
+    Export:
+      Name: !Sub "${pVPCName}-VPCID"
+      
+      
