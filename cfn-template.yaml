@@ -4,7 +4,7 @@ Resources:
   GitsyncVpc:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.1/16
+      CidrBlock: 10.0.0.0/16
       EnableDnsSupport: true
       Tags:
         - Key: Name
@@ -13,7 +13,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref GitsyncVpc
-      CidrBlock: 10.0.0.1/24
+      CidrBlock: 10.0.0.0/24
       Tags:
         - Key: Name
           Value: Git sync
@@ -25,3 +25,11 @@ Resources:
       Tags:
         - Key: Name
           Value: Git sync2
+  GitsyncSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref GitsyncVpc
+      CidrBlock: 10.0.2.0/24
+      Tags:
+        - Key: Name
+          Value: Git sync3
