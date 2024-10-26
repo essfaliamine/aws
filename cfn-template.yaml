@@ -33,3 +33,11 @@ Resources:
       Tags:
         - Key: Name
           Value: Git sync3
+  GitsyncSubnet4:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref GitsyncVpc
+      CidrBlock: 10.0.3.0/24
+      Tags:
+        - Key: Name
+          Value: Git sync4
